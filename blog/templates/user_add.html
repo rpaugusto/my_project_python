@@ -1,0 +1,29 @@
+{% extends "__layout.html" %}
+
+{% block content %}
+<div class="row">
+	{% include 'includes/_navbar.html' %}
+	{% include 'includes/_messages.html' %}
+</div>
+<div class="row">
+	<div class="shadow p-3 mb-5 bg-body rounded">
+		<h3>Add New User!</h3>
+		<hr>
+	<form method="post">
+		{{ form.hidden_tag() }}
+		{{ form.name.label(class="form-label") }}
+		{{ form.name(class="form-control") }}
+		<br>
+		{{ form.email.label(class="form-label") }}
+		{{ form.email(class="form-control") }}
+		<br>
+		{{ form.password.label(class="form-label") }}
+		{{ form.password(class="form-control") }}
+		<br>
+		{{ form.submit(class="btn btn-secondary") }}
+	</form>
+
+	</div>
+</div>
+
+{% endblock %}

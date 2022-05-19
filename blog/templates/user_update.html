@@ -1,0 +1,29 @@
+{% extends "__layout.html" %}
+
+{% block content %}
+<div class="row">
+	{% include 'includes/_navbar.html' %}
+	{% include 'includes/_messages.html' %}
+</div>
+<div class="row">
+	<div class="shadow p-3 mb-5 bg-body rounded">
+		<h3>Update user!</h3>
+		<hr>
+	<form method="post" action="/user/update/{{ user_to_update.id }}">
+		{{ form.hidden_tag() }}
+		{{ form.name.label(class="form-label") }}
+		{{ form.name(class="form-control", value=user_to_update.name) }}
+		<br>
+		{{ form.email.label(class="form-label") }}
+		{{ form.email(class="form-control", value=user_to_update.email) }}
+		<br>
+		{{ form.password.label(class="form-label") }}
+		{{ form.password(class="form-control", value=user_to_update.password) }}
+		<br>
+		{{ form.submit(class="btn btn-secondary") }}
+	</form>
+
+	</div>
+</div>
+
+{% endblock %}

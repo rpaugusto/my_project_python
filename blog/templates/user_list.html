@@ -1,0 +1,37 @@
+{% extends "__layout.html" %}
+
+{% block content %}
+
+<div class="row">
+	{% include 'includes/_navbar.html' %}
+	{% include 'includes/_messages.html' %}
+</div>
+
+<div class="row">
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Name</th>
+				<th scope="col">E-Mail</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+{% for our_user in our_users %}
+			<tr>
+				<td scope="row">{{ our_user.id }}</td>
+				<td>{{ our_user.name }}</td>
+				<td>{{ our_user.email }}</td>
+				<td>
+					<a href="{{ url_for('user_update', id=our_user.id)}}">Update</a>
+					-
+					<a href="{{ url_for('user_delete', id=our_user.id)}}">Delete</a>
+				</td>
+			</tr>
+{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock %}
