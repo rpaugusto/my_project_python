@@ -9,10 +9,18 @@
 
 	<div class="row">
 		<div class="col col-md-4">
-			<p class="h1"> welcome, {{ user.name }} </p>
-			<p> I found this info: </p>
-			<p><strong>your name:</strong> {{ user.name }}</p>
-			<p><strong>Your email:</strong> {{ user.email }}</p>
+			<h1>Profile page!</h1>
+			<hr>
+			<p><strong>User Id:</strong> {{ current_user.id }}</p>
+			<p><strong>Name:</strong> {{ current_user.name }}</p>
+			<p><strong>E-Mail:</strong> {{ current_user.email }}</p>
+			<p><strong>Date joined:</strong> {{ current_user.created }}</p>
+			<hr>
+			<div class="btn-group">
+				<a href="{{ url_for('user_update', id=current_user.id) }}" class="btn btn-sm btn-outline-secondary">Update Profile</a>
+				<a href="{{ url_for('user_delete', id=current_user.id) }}" class="btn btn-sm btn-outline-secondary">Delete Profile</a>
+				<a href="{{ url_for('user_logout') }}" class="btn btn-sm btn-outline-secondary">Logout</a>
+			</div>
 		</div>
 		<div class="col col-md-8">
 		<table class="table">
@@ -31,11 +39,11 @@
 					<td>{{ your_post.title }}</td>
 					<td>{{ your_post.slug }}</td>
 					<td>
-						<a href="#">Read</a>
+						<a href="{{ url_for('post_read_more', id=your_post.id) }}">Read</a>
 						-
-						<a href="#">Update</a>
+						<a href="{{ url_for('post_update', id=your_post.id) }}">Update</a>
 						-
-						<a href="#">Delete</a>
+						<a href="{{ url_for('post_delete', id=your_post.id) }}">Delete</a>
 					</td>
 				</tr>
 	{% endfor %}

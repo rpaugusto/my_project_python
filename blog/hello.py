@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
+from flask_login import login_user,  login_required, current_user, logout_user, LoginManager, UserMixin
 
 #create falsk instance
 app = Flask(__name__)
@@ -21,29 +22,40 @@ app.config['SECRET_KEY'] = 'thisisasecretkeybygflaskform'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+#flask_login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'user_login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
 #create models
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(256), nullable=False)
     password_hash = db.Column(db.String(256))
     created = db.Column(db.DateTime, default=db.func.now())
+    # User can Have Many Posts
+    posts = db.relationship('Posts', backref='poster')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
 class Posts(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         title = db.Column(db.String(128))
         slug = db.Column(db.String(128))
         content = db.Column(db.Text)
-        author = db.Column(db.String(128), nullable=False)
+        #author = db.Column(db.String(128), nullable=False)
         date_posted = db.Column(db.DateTime, default=db.func.now())
+        # Foreign Key to link users
+        poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-
 
 #create a form class
 class UserForm(FlaskForm):
@@ -62,7 +74,7 @@ class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     slug = StringField("Slug", validators=[DataRequired()])
     content = TextAreaField("Content", validators=[DataRequired()])
-    author = StringField("Author", validators=[DataRequired()])
+    #author = StringField("Author", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 #create routes
@@ -101,6 +113,7 @@ def user_add():
     return render_template('user_add.html', form=form)
 
 @app.route('/user/update/<int:id>', methods=['POST','GET'])
+@login_required
 def user_update(id):
     user = UserForm()
     user_to_update = Users.query.get_or_404(id)
@@ -143,8 +156,7 @@ def user_login():
         if user_to_login:
             if bcrypt.check_password_hash(user_to_login.password_hash, request.form['password']):
                 #flash('Loggin success!', 'success')
-                session['email'] = user_to_login.email
-                session['name'] = user_to_login.name
+                login_user(user_to_login)
                 session['user_id'] = user_to_login.id
                 return redirect(url_for('user_profile', id=user_to_login.id))
             else:
@@ -154,15 +166,23 @@ def user_login():
 
     return render_template("user_login.html", form=form)
 
-@app.route('/user/profile/<int:id>', methods=['POST','GET'])
-def user_profile(id):
-    user_profile = Users.query.get_or_404(id)
-    user_posts = Posts.query.filter_by(author=user_profile.name)
+@app.route('/user/logout')
+@login_required
+def user_logout():
+    logout_user()
+    flash('Logout success!', 'info')
+    return redirect(url_for('index'))
 
-    return render_template('user_profile.html', user=user_profile, your_posts=user_posts)
+@app.route('/user/profile/', methods=['POST','GET'])
+@login_required
+def user_profile():
+    user_posts = Posts.query.filter_by(poster_id=current_user.id)
+
+    return render_template('user_profile.html', your_posts=user_posts)
 
 ### post routes ###
 @app.route('/post/add', methods=['GET','POST'])
+@login_required
 def post_add():
     form = PostForm()
 
@@ -170,7 +190,7 @@ def post_add():
         post = Posts(
             title = form.title.data,
             slug = form.slug.data,
-            author = form.author.data,
+            poster_id = current_user.id,
             content = form.content.data
         )
 
@@ -182,9 +202,44 @@ def post_add():
             db.session.rollback()
             flash("Error on add post","danger")
 
-        return redirect(url_for('user_profile', id=session['user_id']))
+        return redirect(url_for('user_profile'))
 
     return render_template("post_add.html", form=form)
+
+@app.route('/post/update/<int:id>', methods=['GET','POST'])
+@login_required
+def post_update(id):
+    form = PostForm()
+    post_to_update = Posts.query.get_or_404(id)
+
+    if form.validate_on_submit():
+        post_to_update.title = form.title.data
+        post_to_update.slug = form.slug.data
+        post_to_update.content = form.content.data
+        post_to_update.poster_id = current_user.id
+
+        db.session.commit()
+        flash('Blog Post Updated Successfully!', 'success')
+
+        return redirect(url_for('user_profile'))
+
+    form.content.data = post_to_update.content
+
+    return render_template('post_update.html', form=form, post=post_to_update)
+
+@app.route('/post/delete/<int:id>', methods=['GET','POST'])
+@login_required
+def post_delete(id):
+    post_to_delete = Posts.query.get_or_404(id)
+
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash("Post Delete Sucessfully!","success")
+    except:
+        flash("Error! Look like there was a problem...try again!","warning")
+
+    return redirect(url_for('user_profile'))
 
 @app.route('/post/read_more/<int:id>', methods=['GET','POST'])
 def post_read_more(id):

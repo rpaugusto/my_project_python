@@ -13,16 +13,13 @@
 	<form method="post">
 		{{ form.hidden_tag() }}
 		{{ form.title.label(class="form-label") }}
-		{{ form.title(class="form-control") }}
+		{{ form.title(class="form-control", value=post.title) }}
 		<br>
 		{{ form.slug.label(class="form-label") }}
-		{{ form.slug(class="form-control") }}
-		<br><!--
-		{{ form.author.label(class="form-label") }}
-		{{ form.author(class="form-control", value=post.author) }}
-		<br> -->
+		{{ form.slug(class="form-control", value=post.slug) }}
+		<br>
 		{{ form.content.label(class="form-label") }}
-		{{ form.content(class="form-control", rows="7") }}
+		{{ form.content(class="form-control", rows="7", value=post.content) }}
 		<br>
 		{{ form.submit(class="btn btn-secondary") }}
 	</form>

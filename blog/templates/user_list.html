@@ -26,9 +26,9 @@
 				<td>{{ our_user.email }}</td>
 				<td>{{ our_user.password_hash }}</td>
 				<td>
-					<a href="{{ url_for('user_update', id=our_user.id)}}">Update</a>
+					<a href="{{ url_for('user_update', id=our_user.id) }}">Update</a>
 					-
-					<a href="{{ url_for('user_delete', id=our_user.id)}}">Delete</a>
+					<a href="{{ url_for('user_delete', id=our_user.id) }}">Delete</a>
 				</td>
 			</tr>
 {% endfor %}
