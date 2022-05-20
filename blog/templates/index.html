@@ -2,9 +2,32 @@
 
 {% block content %}
 
+<div class="row">
 	{% include 'includes/_navbar.html' %}
+	<br/>
+	{% include 'includes/_messages.html' %}
+</div>
+<br/>
+<div class="row">
+	{% for post in posts %}
+	<div class="shadow p-3 mb-3 bg-body rounded">
+		<div class="card">
+	  	<div class="card-header">
+	    	{{ post.author }}
+				<span class="position-absolute top-0 start-10 translate-middle badge rounded-pill bg-danger">{{ post.date_posted }}</span>
+	  	</div>
+	  	<div class="card-body">
+	    	<h5 class="card-title">{{ post.title }}</h5>
+	    	<p class="card-text text-wrap">{{ post.content }}</p>
+	    	<a href="{{ url_for('post_read_more', id=post.id )}}" class="btn btn-primary">
+					Read More
+				</a>
+	  	</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
 
-	<p class="h1"> basic index</p>
 
 
 {% endblock %}

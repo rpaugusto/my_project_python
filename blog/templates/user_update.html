@@ -18,7 +18,10 @@
 		{{ form.email(class="form-control", value=user_to_update.email) }}
 		<br>
 		{{ form.password.label(class="form-label") }}
-		{{ form.password(class="form-control", value=user_to_update.password) }}
+		{{ form.password(class="form-control") }}
+		<br>
+		{{ form.password_confirm.label(class="form-label") }}
+		{{ form.password_confirm(class="form-control") }}
 		<br>
 		{{ form.submit(class="btn btn-secondary") }}
 	</form>

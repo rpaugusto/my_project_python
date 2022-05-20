@@ -1,0 +1,33 @@
+{% extends "__layout.html" %}
+
+{% block content %}
+<div class="row">
+	{% include 'includes/_navbar.html' %}
+	<br/>
+	{% include 'includes/_messages.html' %}
+</div>
+<div class="row">
+	<div class="shadow p-3 mb-5 bg-body rounded">
+		<h3>Add New Post!</h3>
+		<hr>
+	<form method="post">
+		{{ form.hidden_tag() }}
+		{{ form.title.label(class="form-label") }}
+		{{ form.title(class="form-control") }}
+		<br>
+		{{ form.slug.label(class="form-label") }}
+		{{ form.slug(class="form-control") }}
+		<br>
+		{{ form.author.label(class="form-label") }}
+		{{ form.author(class="form-control", value=session['name']) }}
+		<br>
+		{{ form.content.label(class="form-label") }}
+		{{ form.content(class="form-control", rows="7") }}
+		<br>
+		{{ form.submit(class="btn btn-secondary") }}
+	</form>
+
+	</div>
+</div>
+
+{% endblock %}

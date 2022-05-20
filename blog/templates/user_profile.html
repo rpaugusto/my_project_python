@@ -1,0 +1,47 @@
+{% extends "__layout.html" %}
+
+{% block content %}
+<div class="row">
+	{% include 'includes/_navbar.html' %}
+	<br/>
+	{% include 'includes/_messages.html' %}
+</div>
+
+	<div class="row">
+		<div class="col col-md-4">
+			<p class="h1"> welcome, {{ user.name }} </p>
+			<p> I found this info: </p>
+			<p><strong>your name:</strong> {{ user.name }}</p>
+			<p><strong>Your email:</strong> {{ user.email }}</p>
+		</div>
+		<div class="col col-md-8">
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Title</th>
+					<th scope="col">Slug</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+	{% for your_post in your_posts %}
+				<tr>
+					<td scope="row">{{ your_post.id }}</td>
+					<td>{{ your_post.title }}</td>
+					<td>{{ your_post.slug }}</td>
+					<td>
+						<a href="#">Read</a>
+						-
+						<a href="#">Update</a>
+						-
+						<a href="#">Delete</a>
+					</td>
+				</tr>
+	{% endfor %}
+			</tbody>
+		</table>
+		</div>
+	</div>
+
+{% endblock %}

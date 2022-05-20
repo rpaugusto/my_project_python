@@ -14,6 +14,7 @@
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
 				<th scope="col">E-Mail</th>
+				<th scope="col">Password</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -23,6 +24,7 @@
 				<td scope="row">{{ our_user.id }}</td>
 				<td>{{ our_user.name }}</td>
 				<td>{{ our_user.email }}</td>
+				<td>{{ our_user.password_hash }}</td>
 				<td>
 					<a href="{{ url_for('user_update', id=our_user.id)}}">Update</a>
 					-
